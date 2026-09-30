@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anonymous Unband — WhatsApp Support</title>
+<style>
+  :root{
+    --red:#ff0808;
+    --red2:#ff3030;
+    --bg:#050505;
+    --panel:#0a0a0a;
+    --field:#151515;
+    --border:#303030;
+    --text:#f2f2f2;
+    --muted:#a4a4a4;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#020202;color:var(--text)}
+  body{
+    overflow-x:hidden;
+    background:
+      radial-gradient(circle at 50% 5%, rgba(255,0,0,.13), transparent 27%),
+      radial-gradient(circle at 15% 65%, rgba(255,0,0,.05), transparent 22%),
+      #020202;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:10;
+    background-image:
+      radial-gradient(circle, rgba(255,0,0,.45) 0 1px, transparent 1.5px);
+    background-size:130px 130px;
+    opacity:.16;
+    animation: stars 2.8s steps(2,end) infinite;
+  }
+
+  .wrap{width:min(560px,92vw);margin:16px auto 40px;position:relative}
+  .glow-top{
+    position:absolute;left:8%;right:8%;top:0;height:120px;
+    background:radial-gradient(ellipse, rgba(255,0,0,.24), transparent 68%);
+    filter:blur(16px);pointer-events:none
+  }
+
+  header{text-align:center;padding:14px 10px 20px;position:relative}
+  .logo{
+    display:inline-block;
+    color:#ff1414;
+    font-size:24px;font-weight:900;letter-spacing:5px;
+    text-shadow:0 0 5px #f00,0 0 16px #f00,0 0 34px rgba(255,0,0,.75);
+    animation:flicker 2.8s infinite;
+  }
+  .logo::before{content:"☠";font-size:24px;margin-right:14px}
+  .subtitle{
+    margin-top:10px;color:#999;font-size:15px;
+    text-shadow:0 0 7px rgba(255,255,255,.12)
+  }
+
+  .card{
+    position:relative;
+    border:1px solid #333;border-radius:22px;
+    background:linear-gradient(180deg,rgba(12,12,12,.97),rgba(5,5,5,.98));
+    box-shadow:0 0 0 1px rgba(255,0,0,.02),0 0 30px rgba(255,0,0,.10);
+    padding:20px 24px 24px;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:2px;
+    background:linear-gradient(90deg,transparent,#f00 15%,#ff3a3a 50%,#f00 85%,transparent);
+    box-shadow:0 0 10px #f00,0 0 28px #f00;
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+
+  .field{margin-bottom:18px}
+  label{display:block;color:#bdbdbd;font-size:15px;margin-bottom:8px}
+  input,select,textarea{
+    width:100%;border:1px solid #343434;border-radius:16px;
+    background:#151515;color:#eee;outline:none;
+    font:inherit;font-size:15px;padding:14px 17px;
+    box-shadow:inset 0 0 20px rgba(0,0,0,.22);
+    transition:.2s ease;
+  }
+  input::placeholder,textarea::placeholder{color:#777}
+  input:focus,select:focus,textarea:focus{
+    border-color:#ff1b1b;box-shadow:0 0 0 1px #ff1b1b,0 0 18px rgba(255,0,0,.3)
+  }
+  select{
+    appearance:auto;
+    cursor:pointer;
+  }
+  textarea{min-height:210px;resize:vertical;line-height:1.5}
+
+  .btn{
+    width:100%;border:0;border-radius:16px;padding:10px 13px;
+    margin-top:4px;margin-bottom:10px;
+    background:#ff0909;color:#fff;font-size:17px;font-weight:800;
+    cursor:pointer;letter-spacing:.2px;
+    box-shadow:0 0 8px #f00,0 0 20px rgba(255,0,0,.65),0 0 45px rgba(255,0,0,.20);
+    transition:transform .15s,box-shadow .15s,filter .15s;
+  }
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 0 10px #f00,0 0 28px rgba(255,0,0,.85)}
+  .btn:active{transform:scale(.99)}
+  .btn.secondary{
+    background:#151515;border:1px solid #3a3a3a;
+    box-shadow:none;color:#eee;
+  }
+  .btn.secondary:hover{border-color:#ff2525;box-shadow:0 0 14px rgba(255,0,0,.25)}
+  .btn:last-child{margin-bottom:0}
+
+  .status{
+    margin:4px 0 18px;padding:13px 15px;border-radius:12px;
+    border:1px solid rgba(255,0,0,.35);background:rgba(255,0,0,.07);
+    color:#ffb0b0;font-size:13px;display:none
+  }
+
+
+  .info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:22px;
+  }
+  .info-box{
+    background:linear-gradient(180deg,#101010,#080808);
+    border:1px solid #292929;
+    border-radius:20px;
+    padding:17px;
+    box-shadow:0 0 20px rgba(255,0,0,.07);
+  }
+  .info-box h2{
+    margin:0 0 12px;
+    color:#ff2525;
+    font-size:17px;
+    text-shadow:0 0 10px rgba(255,0,0,.45);
+  }
+  .info-box h3{
+    margin:17px 0 7px;
+    font-size:13px;
+    color:#eee;
+  }
+  .info-box p,.info-box li{
+    color:#aaa;
+    font-size:13px;
+    line-height:1.65;
+  }
+  .info-box ul,.info-box ol{padding-left:20px;margin:8px 0 0}
+  .contact-card{
+    margin-top:16px;
+    background:#090909;
+    border:1px solid #303030;
+    border-radius:20px;
+    padding:17px;
+    text-align:center;
+    box-shadow:0 0 24px rgba(255,0,0,.08);
+  }
+  .contact-card h2{
+    margin:0 0 8px;color:#ff2020;font-size:21px;
+    text-shadow:0 0 12px rgba(255,0,0,.45)
+  }
+  .contact-card p{margin:7px 0;color:#999;font-size:13px;line-height:1.6}
+  .contact-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:15px}
+  .contact-link{
+    display:inline-block;text-decoration:none;color:#fff;background:#151515;
+    border:1px solid #383838;border-radius:12px;padding:11px 16px;font-weight:700;
+    transition:.2s
+  }
+  .contact-link:hover{border-color:#f22;box-shadow:0 0 14px rgba(255,0,0,.3)}
+  .warning{
+    margin-top:16px;padding:10px 13px;border-radius:13px;
+    border:1px solid rgba(255,170,0,.25);background:rgba(255,120,0,.05);
+    color:#bdbdbd;font-size:13px;line-height:1.6
+  }
+  @media(max-width:560px){
+    .info-grid{grid-template-columns:1fr}
+  }
+
+  .footer{
+    text-align:center;color:#555;font-size:13px;margin-top:18px;
+    letter-spacing:.5px
+  }
+
+  @keyframes flicker{
+    0%,18%,20%,22%,64%,66%,100%{opacity:1}
+    19%,21%,65%{opacity:.55}
+  }
+  @keyframes pulse{
+    0%,100%{opacity:.65;box-shadow:0 0 8px #f00}
+    50%{opacity:1;box-shadow:0 0 16px #f00,0 0 35px rgba(255,0,0,.45)}
+  }
+  @keyframes stars{
+    0%,100%{opacity:.08} 50%{opacity:.22}
+  }
+
+  @media(max-width:560px){
+    .wrap{width:94vw;margin-top:12px}
+    .logo{font-size:22px;letter-spacing:3px}
+    .logo::before{font-size:15px;margin-right:8px}
+    .subtitle{font-size:15px}
+    .card{padding:24px 26px 28px;border-radius:28px}
+    label{font-size:23px}
+    input,select,textarea{font-size:17px}
+    textarea{min-height:250px}
+  }
+
+  /* Compact layout */
+  .wrap{max-width:560px}
+  .card{padding:18px 22px 22px}
+  .field{margin-bottom:16px}
+  label{font-size:18px}
+  input,select,textarea{font-size:15px;padding:13px 15px;border-radius:13px}
+  textarea{min-height:190px}
+  .btn{font-size:16px;padding:13px 15px;border-radius:13px;margin-bottom:9px}
+  .info-grid{gap:12px;margin-top:16px}
+  .info-box{padding:15px;border-radius:16px}
+  .info-box h2{font-size:16px;margin-bottom:8px}
+  .info-box h3{font-size:14px;margin-top:12px}
+  .info-box p,.info-box li{font-size:12px;line-height:1.5}
+  .contact-card{margin-top:12px;padding:15px;border-radius:16px}
+  .contact-card h2{font-size:17px}
+  .contact-card p{font-size:12px}
+  .contact-link{padding:9px 12px;font-size:12px;border-radius:10px}
+  .footer{font-size:11px;margin-top:12px}
+  @media(max-width:560px){
+    .wrap{width:90vw;margin:10px auto 28px}
+    .logo{font-size:18px;letter-spacing:2px}
+    .logo::before{font-size:15px;margin-right:6px}
+    .subtitle{font-size:12px;margin-top:6px}
+    .card{padding:16px 17px 19px;border-radius:19px}
+    label{font-size:16px}
+    input,select,textarea{font-size:14px;padding:12px 13px}
+    textarea{min-height:175px}
+    .btn{font-size:14px;padding:12px 13px}
+    .info-box{padding:14px}
+    .info-box h2{font-size:15px}
+  }
+
+
+  /* Brand title: larger than the compact form */
+  .logo{
+    font-size:30px !important;
+    letter-spacing:4px !important;
+    line-height:1.15;
+    white-space:nowrap;
+  }
+  .logo::before{font-size:24px !important;margin-right:10px !important}
+  @media(max-width:560px){
+    .logo{
+      font-size:24px !important;
+      letter-spacing:3px !important;
+    }
+    .logo::before{font-size:19px !important;margin-right:7px !important}
+  }
+
+
+  .hero-box{position:relative;margin:14px 0 18px;height:150px;border:1px solid rgba(255,35,35,.7);border-radius:22px;background:radial-gradient(circle at 50% 50%,rgba(255,0,0,.10),transparent 62%),linear-gradient(145deg,#090909,#030303);box-shadow:0 0 0 1px rgba(255,0,0,.08),0 0 18px rgba(255,0,0,.35),inset 0 0 28px rgba(255,0,0,.08);overflow:hidden}
+  .hero-box:before{content:"";position:absolute;inset:7px;border:1px solid rgba(255,0,0,.22);border-radius:17px;box-shadow:inset 0 0 18px rgba(255,0,0,.08)}
+  .hero-corner{position:absolute;width:27px;height:27px;border-color:#ff3030;border-style:solid;filter:drop-shadow(0 0 7px #f00)}
+  .hero-corner.tl{left:0;top:0;border-width:3px 0 0 3px}.hero-corner.tr{right:0;top:0;border-width:3px 3px 0 0}.hero-corner.bl{left:0;bottom:0;border-width:0 0 3px 3px}.hero-corner.br{right:0;bottom:0;border-width:0 3px 3px 0}
+  .hero-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.hero-icon{font-size:36px;color:#ff1717;text-shadow:0 0 8px #f00,0 0 25px rgba(255,0,0,.7);animation:flicker 2.4s infinite}.hero-title{margin-top:5px;color:#f5f5f5;font-size:15px;font-weight:800;letter-spacing:2px;text-shadow:0 0 8px rgba(255,0,0,.35)}.hero-text{margin-top:5px;color:#777;font-size:11px}.hero-scan{position:absolute;left:-20%;right:-20%;height:2px;top:-5px;background:linear-gradient(90deg,transparent,#ff2020,transparent);box-shadow:0 0 12px #f00;animation:scan 3.5s linear infinite}@keyframes scan{from{transform:translateY(0)}to{transform:translateY(160px)}}@media(max-width:560px){.hero-box{height:135px;margin:12px 0 15px;border-radius:19px}.hero-icon{font-size:32px}.hero-title{font-size:13px}}
+
+
+  .video-banner{position:relative;margin:14px 0 18px;height:190px;border:1px solid #7a2424;border-radius:22px;overflow:hidden;background:#050505;box-shadow:0 0 12px rgba(255,0,0,.28),0 0 30px rgba(255,0,0,.12);}
+  .appeal-video{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:16/9;
+  object-fit:contain;
+  object-position:center;
+  background:#000;
+}
+  .video-overlay{position:absolute;left:18px;bottom:14px;padding:8px 12px;border-radius:9px;background:rgba(0,0,0,.72);color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;pointer-events:none;text-shadow:0 0 8px #f00;}
+  .video-overlay span{color:#ff1616;margin-right:5px;}
+  .video-corner{position:absolute;width:24px;height:24px;border-color:#ff3030;border-style:solid;filter:drop-shadow(0 0 6px #f00);pointer-events:none;}
+  .video-corner.tl{left:0;top:0;border-width:3px 0 0 3px}.video-corner.tr{right:0;top:0;border-width:3px 3px 0 0}.video-corner.bl{left:0;bottom:0;border-width:0 0 3px 3px}.video-corner.br{right:0;bottom:0;border-width:0 3px 3px 0}
+  @media(max-width:560px){.video-banner{height:165px;margin:11px 0 15px;border-radius:18px}.video-overlay{font-size:10px;left:12px;bottom:10px}}
+
+</style>
+
+<style id="video-banner-lock">
+.video-banner, .hero-video {position:relative; touch-action:pan-y;}
+.video-banner video, .hero-video video {
+  user-select:none !important;
+  -webkit-user-select:none !important;
+}
+</style>
+
+
+<style id="sound-toggle-style">
+.sound-toggle{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  z-index:20;
+  width:42px;height:42px;
+  border:1px solid rgba(255,40,40,.8);
+  border-radius:50%;
+  background:rgba(5,5,5,.88);
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(255,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+}
+.sound-toggle:hover{box-shadow:0 0 18px rgba(255,0,0,.9)}
+</style>
+
+
+<style id="video-fix">
+.video-banner, .hero-video {
+  position:relative !important;
+  width:100% !important;
+  overflow:hidden !important;
+  background:#000 !important;
+}
+.video-banner video, .hero-video video, video {
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  aspect-ratio:16/9 !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  background:#000 !important;
+}
+.sound-toggle{
+  position:absolute !important;
+  right:12px !important;
+  bottom:12px !important;
+  z-index:999 !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  width:44px !important;height:44px !important;
+  border:1px solid #ff2525 !important;
+  border-radius:50% !important;
+  background:rgba(0,0,0,.88) !important;
+  color:#fff !important;
+  font-size:20px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+@media(max-width:560px){
+  .sound-toggle{width:42px !important;height:42px !important;right:9px !important;bottom:9px !important}
+}
+</style>
+
+
+<style id="video-final-fix">
+.video-banner-clean{
+  position:relative;
+  width:100%;
+  margin:0 auto;
+  border:1px solid rgba(255,30,30,.72);
+  border-radius:18px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 0 18px rgba(255,0,0,.28), inset 0 0 20px rgba(255,0,0,.08);
+  line-height:0;
+}
+.video-banner-clean video{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-width:100% !important;
+  max-height:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  background:#000;
+  cursor:default;
+}
+.sound-toggle-clean{
+  position:absolute !important;
+  right:12px !important;
+  bottom:12px !important;
+  z-index:50 !important;
+  width:44px !important;
+  height:44px !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:1px solid #ff3030 !important;
+  border-radius:50% !important;
+  background:rgba(0,0,0,.88) !important;
+  color:#fff !important;
+  font-size:20px !important;
+  line-height:1 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  box-shadow:0 0 12px rgba(255,0,0,.65) !important;
+}
+
+.sound-toggle-clean .volume-icon{width:21px !important;height:21px !important;display:block !important;fill:none !important;stroke:currentColor !important;stroke-width:1.8 !important;stroke-linecap:round !important;stroke-linejoin:round !important;pointer-events:none !important;}
+@media(max-width:560px){
+  .video-banner-clean{border-radius:15px}
+  .sound-toggle-clean{width:40px !important;height:40px !important;right:9px !important;bottom:9px !important}
+}
+</style>
+
+
+<style id="sound-button-final-fix">
+/* Final fix: keep the sound button fully visible and clickable */
+.video-banner{
+  height:auto !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  pointer-events:auto !important;
+}
+.video-banner-clean{
+  position:relative !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  pointer-events:auto !important;
+}
+.video-banner-clean video{
+  width:100% !important;
+  height:auto !important;
+  display:block !important;
+  pointer-events:none !important;
+}
+.sound-toggle-clean{
+  position:absolute !important;
+  right:12px !important;
+  bottom:12px !important;
+  z-index:9999 !important;
+  box-sizing:border-box !important;
+  width:46px !important;
+  height:46px !important;
+  min-width:46px !important;
+  min-height:46px !important;
+  max-width:46px !important;
+  max-height:46px !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:2px solid #ff3030 !important;
+  border-radius:50% !important;
+  background:rgba(0,0,0,.92) !important;
+  color:#fff !important;
+  font-size:21px !important;
+  line-height:46px !important;
+  text-align:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  pointer-events:auto !important;
+  touch-action:manipulation !important;
+  box-shadow:0 0 14px rgba(255,0,0,.75) !important;
+  transform:none !important;
+}
+@media(max-width:560px){
+  .sound-toggle-clean{width:42px !important;height:42px !important;min-width:42px !important;min-height:42px !important;max-width:42px !important;max-height:42px !important;line-height:42px !important;right:10px !important;bottom:10px !important;}
+}
+</style>
+
+
+<style id="about-unband-style">
+.about-unband{margin:18px auto 0;padding:18px;border:1px solid rgba(255,35,35,.65);border-radius:16px;background:linear-gradient(180deg,rgba(20,0,0,.9),rgba(5,5,5,.96));box-shadow:0 0 18px rgba(255,0,0,.16);color:#ddd;line-height:1.65;font-size:14px}
+.about-title{font-size:18px;font-weight:900;letter-spacing:1.2px;color:#ff3b3b;text-shadow:0 0 10px rgba(255,0,0,.55);margin-bottom:10px}
+.about-unband p{margin:8px 0}.about-unband b{color:#fff}.about-warning{margin-top:12px;padding:11px 12px;border-left:3px solid #ff3030;border-radius:8px;background:rgba(255,0,0,.08);color:#f2dede}.about-source{font-size:12px!important;color:#888!important;margin-top:12px!important}
+@media(max-width:560px){.about-unband{padding:15px;font-size:13px}.about-title{font-size:16px}}
+
+  .unband-info-trigger{width:100%;margin:0 0 16px;padding:12px 14px;border:1px solid rgba(255,40,40,.55);border-radius:13px;background:#0d0d0d;color:#ff5b5b;font-size:13px;font-weight:800;letter-spacing:.4px;cursor:pointer;box-shadow:0 0 14px rgba(255,0,0,.10);transition:.2s}
+  .unband-info-trigger:hover{border-color:#ff3030;box-shadow:0 0 18px rgba(255,0,0,.28);transform:translateY(-1px)}
+  .unband-popup{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}
+  .unband-popup.show{display:flex}
+  .unband-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}
+  .unband-popup-card{position:relative;z-index:2;width:min(520px,94vw);max-height:86vh;overflow:auto;padding:22px 20px 20px;border:1px solid rgba(255,35,35,.72);border-radius:20px;background:linear-gradient(180deg,#130404,#050505);box-shadow:0 0 25px rgba(255,0,0,.35),inset 0 0 25px rgba(255,0,0,.06);color:#ddd;line-height:1.65;font-size:13px}
+  .unband-popup-card p{margin:9px 0}.unband-popup-card b{color:#fff}
+  .unband-popup-title{margin:0 35px 13px 0;color:#ff3b3b;font-size:18px;font-weight:900;letter-spacing:1px;text-shadow:0 0 10px rgba(255,0,0,.55)}
+  .unband-popup-close{position:absolute;top:10px;right:10px;width:38px;height:38px;border:1px solid #ff3030;border-radius:50%;background:#090909;color:#fff;font-size:25px;line-height:1;cursor:pointer}
+  .unband-popup .about-warning{margin-top:13px;padding:11px 12px;border-left:3px solid #ff3030;border-radius:8px;background:rgba(255,0,0,.08);color:#f2dede}
+  .unband-popup .about-source{font-size:11px;color:#888;margin-top:12px}
+
+  .video-banner-clean{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+@media(max-width:560px){.unband-info-trigger{font-size:12px;padding:11px}.unband-popup-card{padding:20px 16px 17px;border-radius:17px}.unband-popup-title{font-size:16px}
+}
+
+
+/* Hamburger menu tambahan */
+.hamburger-menu{position:fixed;top:14px;left:14px;z-index:200000}.hamburger-btn{width:46px;height:46px;border:1px solid rgba(255,35,35,.75);border-radius:12px;background:rgba(5,5,5,.92);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:0;box-shadow:0 0 12px rgba(255,0,0,.35)}.hamburger-btn span{display:block;width:22px;height:2px;border-radius:2px;background:#ff3030;box-shadow:0 0 7px rgba(255,0,0,.7);transition:.2s}.hamburger-btn.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}.hamburger-btn.active span:nth-child(2){opacity:0}.hamburger-btn.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}.side-menu{position:fixed;top:0;left:0;width:min(280px,82vw);height:100vh;z-index:199999;padding:78px 16px 20px;background:linear-gradient(180deg,#100202,#050505);border-right:1px solid rgba(255,35,35,.55);box-shadow:8px 0 30px rgba(255,0,0,.18);transform:translateX(-105%);transition:transform .25s ease;overflow-y:auto}.side-menu.open{transform:translateX(0)}.side-menu-title{color:#ff3030;font-size:17px;font-weight:900;letter-spacing:1px;margin:0 0 18px;text-shadow:0 0 10px rgba(255,0,0,.55)}.side-menu a{display:block;text-decoration:none;color:#eee;background:#0d0d0d;border:1px solid #292929;border-radius:12px;padding:13px 14px;margin-bottom:10px;font-size:14px;font-weight:700;transition:.2s}.side-menu a:hover{border-color:#ff3030;box-shadow:0 0 14px rgba(255,0,0,.22);transform:translateX(2px)}.menu-backdrop{position:fixed;inset:0;z-index:199998;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);display:none}.menu-backdrop.show{display:block}
+</style>
+
+
+<style id="bug-wa-page-style">
+  .bug-wa-page{
+    display:none;
+    margin-top:16px;
+    border:1px solid #333;
+    border-radius:22px;
+    background:linear-gradient(180deg,rgba(12,12,12,.97),rgba(5,5,5,.98));
+    box-shadow:0 0 30px rgba(255,0,0,.10);
+    padding:20px;
+    position:relative;
+  }
+  .bug-wa-page.show{display:block}
+  .bug-wa-title{
+    color:#ff2020;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-shadow:0 0 12px rgba(255,0,0,.55);
+    margin-bottom:6px;
+  }
+  .bug-wa-desc{color:#999;font-size:13px;margin-bottom:18px}
+  .bug-wa-card{
+    background:#0d0d0d;
+    border:1px solid #292929;
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
+  }
+  .bug-wa-card h3{margin:0 0 8px;color:#eee;font-size:16px}
+  .bug-wa-card p{margin:0 0 12px;color:#999;font-size:12px;line-height:1.55}
+  .bug-wa-input{
+    width:100%;
+    border:1px solid #343434;
+    border-radius:12px;
+    background:#151515;
+    color:#eee;
+    padding:12px 13px;
+    outline:none;
+    box-sizing:border-box;
+  }
+  .bug-wa-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  .bug-wa-btn{
+    border:1px solid #3a3a3a;
+    border-radius:12px;
+    background:#151515;
+    color:#eee;
+    padding:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .bug-wa-btn:hover{border-color:#ff2525;box-shadow:0 0 14px rgba(255,0,0,.22)}
+  .bug-wa-note{
+    border-left:3px solid #ff3030;
+    background:rgba(255,0,0,.06);
+    color:#aaa;
+    padding:10px 12px;
+    border-radius:8px;
+    font-size:12px;
+    line-height:1.55;
+  }
+  @media(max-width:560px){
+    .bug-wa-page{padding:16px;border-radius:19px}
+    .bug-wa-actions{grid-template-columns:1fr}
+  }
+</style>
+
+
+<style id="band-wa-style">
+  .band-wa-page{display:none;margin-top:16px;border:1px solid #333;border-radius:22px;background:linear-gradient(180deg,rgba(12,12,12,.97),rgba(5,5,5,.98));box-shadow:0 0 30px rgba(255,0,0,.10);padding:20px;position:relative;}
+  .band-wa-page.show{display:block}
+  .band-wa-title{color:#ff2020;font-size:22px;font-weight:900;letter-spacing:2px;text-shadow:0 0 12px rgba(255,0,0,.55);margin-bottom:6px}
+  .band-wa-desc{color:#999;font-size:13px;margin-bottom:18px}
+  .band-wa-card{background:#0d0d0d;border:1px solid #292929;border-radius:16px;padding:16px;margin-bottom:12px}
+  .band-wa-card h3{margin:0 0 8px;color:#eee;font-size:16px}
+  .band-wa-card p{margin:0 0 12px;color:#999;font-size:12px;line-height:1.55}
+  .band-wa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .band-wa-field{display:flex;flex-direction:column;gap:7px}
+  .band-wa-field.full{grid-column:1/-1}
+  .band-wa-field label{color:#bbb;font-size:12px;font-weight:700}
+  .band-wa-input,.band-wa-textarea{width:100%;border:1px solid #343434;border-radius:12px;background:#151515;color:#eee;padding:12px 13px;outline:none;box-sizing:border-box;font:inherit}
+  .band-wa-textarea{min-height:130px;resize:vertical;line-height:1.5}
+  .band-wa-input:focus,.band-wa-textarea:focus{border-color:#ff2525;box-shadow:0 0 12px rgba(255,0,0,.12)}
+  .band-wa-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .band-wa-btn{border:1px solid #3a3a3a;border-radius:12px;background:#151515;color:#eee;padding:12px;font-weight:800;cursor:pointer}
+  .band-wa-btn.primary{border-color:#ff2525;background:linear-gradient(180deg,#260707,#150505);color:#fff}
+  .band-wa-btn:hover{border-color:#ff2525;box-shadow:0 0 14px rgba(255,0,0,.22)}
+  .band-wa-note{border-left:3px solid #ff3030;background:rgba(255,0,0,.06);color:#aaa;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.55}
+  @media(max-width:560px){.band-wa-page{padding:16px;border-radius:19px}.band-wa-grid{grid-template-columns:1fr}.band-wa-field.full{grid-column:auto}.band-wa-actions{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="hamburger-menu"><button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Buka menu" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="menu-backdrop" id="menuBackdrop"></div><nav class="side-menu" id="sideMenu" aria-label="Menu utama"><div class="side-menu-title">MENU UTAMA</div><a href="#home" data-menu-link> &nbsp; Home</a><a href="#form" data-menu-link> &nbsp; Form Banding</a><a href="#informasi" data-menu-link> &nbsp; Informasi</a><a href="#contact" data-menu-link> &nbsp; Contact</a>
+    <a href="#band-wa" data-menu-link> &nbsp; Band WA</a><a href="#bug-wa" data-menu-link> &nbsp; Bug WA</a></nav>
+
+<div class="wrap" id="home">
+  <div class="glow-top"></div>
+  <header>
+    <div class="logo">ANONYMOUS UNBAND</div>
+    <div class="subtitle">WhatsApp Unband &amp; Support Center</div>
+    <div class="video-banner">
+      
+<div class="video-banner-clean" id="videoBanner">
+  <video id="bannerVideo"
+         autoplay
+         muted
+         loop
+         playsinline
+         preload="auto"
+         disablepictureinpicture
+         controlslist="nodownload noplaybackrate noremoteplayback"
+         oncontextmenu="return false;">
+    <source src="vidio.mp4" type="video/mp4">
+    Browser kamu tidak mendukung video HTML5.
+  </video>
+
+  <button class="sound-toggle-clean" id="soundToggle" type="button" aria-label="Aktifkan suara" title="Aktifkan suara"><svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9.5a4 4 0 0 1 0 5"/><path d="M18.5 7a7.5 7.5 0 0 1 0 10"/></svg></button>
+</div>
+
+      <div class="video-overlay"><span>▶</span> WHATSAPP UNBAND &amp; SUPPORT</div>
+      <div class="video-corner tl"></div><div class="video-corner tr"></div>
+      <div class="video-corner bl"></div><div class="video-corner br"></div>
+    </div>
+
+  <button class="unband-info-trigger" id="unbandInfoTrigger" type="button">
+     INFORMASI UNBAND WHATSAPP
+  </button>
+
+  <div class="unband-popup" id="unbandPopup" aria-hidden="true">
+    <div class="unband-popup-backdrop" data-close-unband></div>
+    <div class="unband-popup-card" role="dialog" aria-modal="true" aria-labelledby="unbandPopupTitle">
+      <button class="unband-popup-close" id="unbandPopupClose" type="button" aria-label="Tutup">×</button>
+      <div class="unband-popup-title" id="unbandPopupTitle">INFORMASI UNBAND WHATSAPP</div>
+      <p><b>Anonymous Unband</b> dibuat sebagai halaman informasi dan alat bantu untuk pengguna yang mengalami masalah akun WhatsApp, khususnya ketika nomor terkena blokir atau pembatasan.</p>
+      <p><b>Dibuat oleh:</b> Anonymous Unband Team — proyek independen/komunitas, bukan situs resmi WhatsApp dan tidak berafiliasi dengan Meta atau WhatsApp.</p>
+      <p><b>Apa itu “band WA”?</b> Istilah “band” biasanya digunakan untuk menyebut akun WhatsApp yang diblokir atau dibatasi sehingga nomor tidak dapat menggunakan WhatsApp seperti biasa.</p>
+      <p><b>Untuk apa halaman ini?</b> Situs ini membantu pengguna menyiapkan informasi dan teks pengajuan peninjauan akun. Namun, <b>unband tidak dapat dijamin</b> oleh situs pihak ketiga. Hanya WhatsApp yang dapat meninjau dan menentukan apakah sebuah akun akan dipulihkan.</p>
+      <div class="about-warning"><b>⚠️ Keamanan:</b> Jangan pernah memberikan OTP, PIN verifikasi dua langkah, kata sandi, atau kode keamanan kepada siapa pun. Gunakan aplikasi WhatsApp resmi dan hindari aplikasi WhatsApp modifikasi/tidak resmi.</div>
+      <p class="about-source">Referensi: Ketentuan Layanan dan Pusat Bantuan resmi WhatsApp.</p>
+    </div>
+  </div>
+</header>
+
+  <main class="card" id="form">
+    <div class="field">
+      <label for="phone">Nomor WhatsApp</label>
+      <input id="phone" type="tel" placeholder="+628xxxxxxxxxx" autocomplete="tel">
+    </div>
+
+    <div class="field">
+      <label for="name">Nama</label>
+      <input id="name" type="text" placeholder="Masukkan nama" autocomplete="name">
+    </div>
+
+    <div class="field">
+      <label for="issue">Jenis masalah</label>
+      <select id="issue">
+        <option>Akun saya diblokir</option>
+        <option>Akun saya ditangguhkan</option>
+        <option>Nomor saya tidak dapat didaftarkan</option>
+        <option>Masalah verifikasi</option>
+        <option>Lainnya</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="message">Pesan tambahan</label>
+      <textarea id="message" placeholder="Jelaskan situasi kamu..."></textarea>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <button class="btn" onclick="generateAppeal()"> MULAI BANDING</button>
+    <button class="btn secondary" onclick="copyAppeal()"> SALIN </button>
+    <button class="btn" onclick="openGmail()"> BANDING VIA GMAIL</button>
+    <button class="btn secondary" onclick="clearForm()"> HAPUS </button>
+  </main>
+
+
+  <section class="info-grid" id="informasi">
+    <article class="info-box">
+      <h2> Cara Menggunakan</h2>
+      <ol>
+        <li>Masukkan nomor WhatsApp dengan format internasional, misalnya <b>+628xxxxxxxxxx</b>.</li>
+        <li>Masukkan nama yang digunakan pada akun.</li>
+        <li>Pilih jenis masalah yang sesuai.</li>
+        <li>Jelaskan masalah secara singkat dan jujur pada kolom pesan.</li>
+        <li>Tekan <b>MULAI BANDING</b> untuk membuat template.</li>
+        <li>Gunakan <b> SALIN</b> untuk menyalin pesan atau <b> BANDING VIA GMAIL</b> untuk membuka aplikasi email.</li>
+      </ol>
+    </article>
+
+    <article class="info-box">
+      <h2> Informasi Unband WhatsApp</h2>
+      <p>
+        Jika akun WhatsApp terkena pemblokiran atau pembatasan, pengguna dapat
+        mengajukan peninjauan melalui saluran dukungan resmi WhatsApp.
+      </p>
+      <h3>Yang sebaiknya disiapkan</h3>
+      <ul>
+        <li>Nomor WhatsApp dalam format internasional.</li>
+        <li>Penjelasan masalah yang jelas dan tidak berlebihan.</li>
+        <li>Informasi yang benar mengenai akun dan kondisi yang dialami.</li>
+      </ul>
+      <div class="warning">
+        ⚠️ Website ini hanya membantu membuat draft pengajuan banding.
+        Tidak ada jaminan akun pasti dipulihkan. Hindari layanan atau pihak
+        yang meminta kode OTP, PIN, atau akses akun.
+      </div>
+    </article>
+  </section>
+
+  <section class="contact-card" id="contact">
+    <h2> Contact Masalah</h2>
+    <p>
+      Jika ada masalah saat menggunakan website ini, hubungi kontak yang
+      disediakan oleh administrator website.
+    </p>
+    <div class="contact-links">
+      <a class="contact-link" href="mailto:support@example.com"> Email Support</a>
+      <a class="contact-link" href="https://wa.me/" target="_blank" rel="noopener"> WhatsApp Support</a>
+    </div>
+    <p style="font-size:12px;color:#666;margin-top:14px">
+      Untuk contact bantuan bisa klik yang di atas itu dan bisa request fitur atau teks banding, TERIMAKSIH.
+    </p>
+  </section>
+
+
+
+
+  <section class="band-wa-page" id="band-wa">
+    <div class="band-wa-title">BAND WA</div>
+    <div class="band-wa-desc">Pusat bantuan untuk menyiapkan pengajuan peninjauan akun WhatsApp.</div>
+
+    <div class="band-wa-card">
+      <h3>Form Pengajuan Banding</h3>
+      <p>Isi data sesuai kondisi akun. Data ini digunakan hanya untuk menyusun draft teks banding.</p>
+      <div class="band-wa-grid">
+        <div class="band-wa-field">
+          <label for="bandNumber">Nomor WhatsApp</label>
+          <input class="band-wa-input" id="bandNumber" type="tel" placeholder="+628xxxxxxxxxx">
+        </div>
+        <div class="band-wa-field">
+          <label for="bandName">Nama</label>
+          <input class="band-wa-input" id="bandName" type="text" placeholder="Nama kamu">
+        </div>
+        <div class="band-wa-field">
+          <label for="bandType">Jenis banding</label>
+          <select class="band-wa-input" id="bandType">
+            <option value="spam">Band Spam</option>
+            <option value="permanent">Band Permanen</option>
+            <option value="custom">Template Saya Sendiri</option>
+          </select>
+        </div>
+        <div class="band-wa-field">
+          <label for="bandReason">Keterangan masalah</label>
+          <input class="band-wa-input" id="bandReason" type="text" placeholder="Contoh: saya ingin meminta peninjauan kembali akun saya.">
+        </div>
+        <div class="band-wa-field full">
+          <label for="bandTemplate">Teks template sesuai kemauan kamu</label>
+          <textarea class="band-wa-textarea" id="bandTemplate" placeholder="Tulis template sendiri. Gunakan {nama}, {nomor}, dan {alasan} sebagai variabel."></textarea>
+          <small style="opacity:.75;display:block;margin-top:6px;">Variabel: {nama} = nama, {nomor} = nomor WhatsApp, {alasan} = keterangan masalah.</small>
+        </div>
+      </div>
+      <div class="band-wa-actions">
+        <button class="band-wa-btn primary" type="button" id="generateBandBtn">BUAT TEKS BANDING</button>
+        <button class="band-wa-btn" type="button" id="resetBandBtn">RESET</button>
+      </div>
+      <div class="band-wa-note" id="bandStatus" style="display:none;margin-top:10px;"></div>
+    </div>
+
+    <div class="band-wa-card">
+      <h3>Hasil Teks Banding</h3>
+      <textarea class="band-wa-textarea" id="bandResult" placeholder="Teks banding akan muncul di sini..." readonly></textarea>
+      <div class="band-wa-actions">
+        <button class="band-wa-btn primary" type="button" id="copyBandBtn">SALIN TEKS</button>
+        <button class="band-wa-btn" type="button" id="clearBandBtn">HAPUS HASIL</button>
+      </div>
+    </div>
+
+    <div class="band-wa-note">⚠️ Gunakan jalur dukungan resmi WhatsApp untuk pengajuan. Jangan berikan OTP, PIN, atau kode keamanan kepada pihak lain. Pemulihan akun tidak dapat dijamin oleh situs pihak ketiga.</div>
+  </section>
+
+  <section class="bug-wa-page" id="bug-wa">
+    <div class="bug-wa-title">BUG WA</div>
+    <div class="bug-wa-desc">Panel fitur WhatsApp.</div>
+
+    <div class="bug-wa-card">
+      <h3>Sender Pairing WA</h3>
+      <p>Panel untuk memasukkan nomor dan menyiapkan proses pairing. Fitur pairing otomatis tidak dijalankan dari halaman ini.</p>
+      <input class="bug-wa-input" id="pairingNumber" type="tel" placeholder="+628xxxxxxxxxx">
+      <div class="bug-wa-actions">
+        <button class="bug-wa-btn" type="button" id="pairingBtn">PAIRING WA</button>
+        <button class="bug-wa-btn" type="button" id="pairingReset">RESET</button>
+      </div>
+      <div class="bug-wa-note" id="pairingStatus" style="display:none;margin-top:10px;"></div>
+    </div>
+
+    <div class="bug-wa-card">
+      <h3>CrashBeta</h3>
+      <p>Menu tampilan CrashBeta. Saya tidak menambahkan fungsi untuk mengirim crash/payload yang dapat mengganggu atau merusak WhatsApp.</p>
+      <button class="bug-wa-btn" type="button" onclick="showBugNotice('CrashBeta')">BUKA CRASHBETA</button>
+    </div>
+
+    <div class="bug-wa-card">
+      <h3>Crash Grup</h3>
+      <p>Menu tampilan Crash Grup. Fungsi pengiriman payload crash tidak diaktifkan.</p>
+      <button class="bug-wa-btn" type="button" onclick="showBugNotice('Crash Grup')">BUKA CRASH GRUP</button>
+    </div>
+  </section>
+
+
+  <div class="footer">Gunakan informasi yang benar dan sesuai dengan situasi akunmu.</div>
+</div>
+
+<script>
+let generated = "";
+
+function getData(){
+  return {
+    phone: document.getElementById("phone").value.trim(),
+    name: document.getElementById("name").value.trim(),
+    issue: document.getElementById("issue").value,
+    message: document.getElementById("message").value.trim()
+  };
+}
+
+function generateAppeal(){
+  const d = getData();
+  if(!d.phone || !d.name){
+    showStatus("Mohon isi nomor WhatsApp dan nama terlebih dahulu.");
+    return;
+  }
+
+  generated =
+`Halo Tim Dukungan WhatsApp,
+
+Nama: ${d.name}
+Nomor WhatsApp: ${d.phone}
+Jenis masalah: ${d.issue}
+
+Saya ingin mengajukan banding terkait akun WhatsApp saya. Saya menyadari bahwa akun saya saat ini mengalami masalah dan saya memohon agar pihak WhatsApp dapat meninjau kembali status akun saya.
+
+${d.message || "Mohon bantu periksa akun saya dan berikan informasi apabila ada langkah yang perlu saya lakukan untuk memulihkan akses."}
+
+Saya bersedia mengikuti Ketentuan Layanan WhatsApp dan kebijakan yang berlaku. Terima kasih atas bantuan dan waktu Anda.
+
+Hormat saya,
+${d.name}`;
+
+  document.getElementById("message").value = generated;
+  showStatus("Teks banding berhasil dibuat. Kamu bisa menyalinnya atau membukanya melalui Gmail.");
+}
+
+async function copyAppeal(){
+  const text = generated || document.getElementById("message").value.trim();
+  if(!text){
+    showStatus("Generate teks banding terlebih dahulu.");
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    showStatus("Teks berhasil disalin ke clipboard.");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+    showStatus("Teks berhasil disalin.");
+  }
+}
+
+function openGmail(){
+  const d=getData();
+  const text=generated || document.getElementById("message").value.trim();
+  if(!text){
+    generateAppeal();
+    return;
+  }
+  const subject=encodeURIComponent("Pengajuan Banding Akun WhatsApp - " + (d.phone || ""));
+  const body=encodeURIComponent(text);
+  window.location.href="mailto:?subject="+subject+"&body="+body;
+}
+
+function clearForm(){
+  document.getElementById("phone").value="";
+  document.getElementById("name").value="";
+  document.getElementById("issue").selectedIndex=0;
+  document.getElementById("message").value="";
+  generated="";
+  document.getElementById("status").style.display="none";
+}
+
+function showStatus(text){
+  const s=document.getElementById("status");
+  s.textContent=text;
+  s.style.display="block";
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="video-final-script">
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("bannerVideo");
+  const button = document.getElementById("soundToggle");
+  const banner = document.getElementById("videoBanner");
+  if (!video || !button || !banner) return;
+
+  // Taruh file vidio.mp4, vidio2.mp4, vidio3.mp4 dalam folder yang sama.
+  const videoSources = ["vidio.mp4", "vidio2.mp4", "vidio3.mp4"];
+  let currentVideo = 0;
+  let startX = 0, startY = 0, swiping = false;
+  let mouseX = 0, mouseDown = false;
+
+  video.muted = true; // Autoplay bersuara dibatasi browser; tekan ikon suara untuk mengaktifkan.
+  video.volume = 1;
+  video.loop = true;
+  video.playsInline = true;
+
+  function playVideo() {
+    const result = video.play();
+    if (result && result.catch) result.catch(function(){});
+  }
+
+  function loadVideo(index) {
+    currentVideo = (index + videoSources.length) % videoSources.length;
+    video.src = videoSources[currentVideo];
+    video.load();
+    playVideo();
+  }
+
+  function changeVideo(direction) {
+    if (videoSources.length < 2) return;
+    loadVideo(currentVideo + direction);
+  }
+
+  loadVideo(0);
+
+  banner.addEventListener("touchstart", function(e) {
+    if (!e.touches.length) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = false;
+  }, {passive:true});
+
+  banner.addEventListener("touchmove", function(e) {
+    if (!e.touches.length) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) swiping = true;
+  }, {passive:true});
+
+  banner.addEventListener("touchend", function(e) {
+    if (!swiping || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) >= 45) changeVideo(dx < 0 ? 1 : -1);
+    swiping = false;
+  }, {passive:true});
+
+  // Geser mouse pada komputer.
+  banner.addEventListener("mousedown", function(e) {
+    if (e.target.closest && e.target.closest("button")) return;
+    mouseDown = true;
+    mouseX = e.clientX;
+  });
+  window.addEventListener("mouseup", function(e) {
+    if (!mouseDown) return;
+    const dx = e.clientX - mouseX;
+    if (Math.abs(dx) >= 45) changeVideo(dx < 0 ? 1 : -1);
+    mouseDown = false;
+  });
+
+  button.addEventListener("click", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    video.muted = !video.muted;
+    video.volume = 1;
+    playVideo();
+
+    if (video.muted) {
+      button.innerHTML = '<svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6m0-6-5 6"/></svg>';
+      button.setAttribute("aria-label", "Aktifkan suara");
+      button.title = "Aktifkan suara";
+    } else {
+      button.innerHTML = '<svg class="volume-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9.5a4 4 0 0 1 0 5"/><path d="M18.5 7a7.5 7.5 0 0 1 0 10"/></svg>';
+      button.setAttribute("aria-label", "Matikan suara");
+      button.title = "Matikan suara";
+    }
+  });
+
+  video.addEventListener("pause", function() {
+    if (!video.ended) playVideo();
+  });
+});
+</script>
+
+
+<script id="unband-popup-script">
+document.addEventListener("DOMContentLoaded", function(){
+  const trigger = document.getElementById("unbandInfoTrigger");
+  const popup = document.getElementById("unbandPopup");
+  const close = document.getElementById("unbandPopupClose");
+  if(!trigger || !popup || !close) return;
+
+  function openPopup(){
+    popup.classList.add("show");
+    popup.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+  }
+  function closePopup(){
+    popup.classList.remove("show");
+    popup.setAttribute("aria-hidden","true");
+    document.body.style.overflow="";
+  }
+
+  trigger.addEventListener("click", openPopup);
+  close.addEventListener("click", closePopup);
+  popup.addEventListener("click", function(e){
+    if(e.target.hasAttribute("data-close-unband")) closePopup();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key==="Escape" && popup.classList.contains("show")) closePopup();
+  });
+});
+</script>
+
+
+<script id="hamburger-menu-script">document.addEventListener("DOMContentLoaded",function(){const b=document.getElementById("hamburgerBtn"),m=document.getElementById("sideMenu"),d=document.getElementById("menuBackdrop");if(!b||!m||!d)return;function t(v){const o=typeof v==="boolean"?v:!m.classList.contains("open");m.classList.toggle("open",o);d.classList.toggle("show",o);b.classList.toggle("active",o);b.setAttribute("aria-expanded",String(o));document.body.style.overflow=o?"hidden":""}b.onclick=()=>t();d.onclick=()=>t(false);m.querySelectorAll("[data-menu-link]").forEach(a=>a.onclick=()=>t(false));document.addEventListener("keydown",e=>{if(e.key==="Escape")t(false)})});</script>
+
+<script id="bug-wa-navigation-script">
+document.addEventListener("DOMContentLoaded", function(){
+  const bugPage = document.getElementById("bug-wa");
+  const bandPage = document.getElementById("band-wa");
+  const home = document.getElementById("home");
+  if(!home) return;
+
+  function updatePages(){
+    const page = location.hash === "#bug-wa" ? "bug" : (location.hash === "#band-wa" ? "band" : "home");
+    if(bugPage) bugPage.classList.toggle("show", page === "bug");
+    if(bandPage) bandPage.classList.toggle("show", page === "band");
+
+    const hideWhenPage = [
+      home.querySelector("header"),
+      home.querySelector("main#form"),
+      home.querySelector(".info-grid"),
+      home.querySelector(".contact-card"),
+      home.querySelector(".footer")
+    ];
+    hideWhenPage.forEach(function(el){ if(el) el.style.display = page === "home" ? "" : "none"; });
+    home.style.display = "";
+  }
+
+  window.addEventListener("hashchange", updatePages);
+  updatePages();
+
+  const pairingBtn = document.getElementById("pairingBtn");
+  const pairingReset = document.getElementById("pairingReset");
+  const pairingNumber = document.getElementById("pairingNumber");
+  const pairingStatus = document.getElementById("pairingStatus");
+  if(pairingBtn){ pairingBtn.addEventListener("click", function(){ const number=pairingNumber.value.trim(); pairingStatus.style.display="block"; pairingStatus.textContent=number ? "Nomor tersimpan untuk tampilan pairing. Hubungkan ke backend resmi WhatsApp jika ingin proses pairing yang sah." : "Masukkan nomor WhatsApp terlebih dahulu."; }); }
+  if(pairingReset){ pairingReset.addEventListener("click", function(){ pairingNumber.value=""; pairingStatus.style.display="none"; }); }
+
+  const bandNumber=document.getElementById("bandNumber"), bandName=document.getElementById("bandName"), bandType=document.getElementById("bandType"), bandReason=document.getElementById("bandReason"), bandTemplate=document.getElementById("bandTemplate"), bandResult=document.getElementById("bandResult"), bandStatus=document.getElementById("bandStatus");
+  const showBandStatus=(msg)=>{ if(bandStatus){bandStatus.style.display="block";bandStatus.textContent=msg;} };
+  const templates={
+    spam:`Halo Tim Dukungan WhatsApp,\n\nNama: {nama}\nNomor WhatsApp: {nomor}\n\nSaya ingin mengajukan peninjauan kembali karena akun saya terkena pembatasan atau pemblokiran terkait dugaan spam. Saya memohon agar status akun saya diperiksa kembali.\n\nKeterangan saya:\n{alasan}\n\nJika terdapat aktivitas yang melanggar kebijakan, saya bersedia memperbaikinya dan mengikuti Ketentuan Layanan WhatsApp. Mohon bantu meninjau akun saya.\n\nTerima kasih.\n{nama}`,
+    permanent:`Halo Tim Dukungan WhatsApp,\n\nNama: {nama}\nNomor WhatsApp: {nomor}\n\nSaya ingin mengajukan peninjauan kembali terhadap pemblokiran permanen pada akun WhatsApp saya. Saya memohon pemeriksaan ulang untuk memastikan apakah pemblokiran tersebut sudah sesuai dengan kondisi akun saya.\n\nKeterangan saya:\n{alasan}\n\nSaya bersedia mengikuti Ketentuan Layanan WhatsApp dan memperbaiki hal apa pun yang diperlukan. Mohon informasikan langkah resmi yang dapat saya lakukan.\n\nTerima kasih.\n{nama}`
+  };
+  function fillTemplate(t, data){ return t.replaceAll("{nama}",data.name).replaceAll("{nomor}",data.number).replaceAll("{alasan}",data.reason || "Mohon bantu meninjau status akun saya dan memberikan informasi mengenai langkah resmi yang perlu saya lakukan."); }
+  document.getElementById("generateBandBtn")?.addEventListener("click", function(){
+    const number=bandNumber.value.trim(), name=bandName.value.trim(), reason=bandReason.value.trim(), type=bandType.value;
+    if(!number || !name){ showBandStatus("Mohon isi nomor WhatsApp dan nama terlebih dahulu."); return; }
+    let tpl=type === "custom" ? bandTemplate.value.trim() : templates[type];
+    if(!tpl){ showBandStatus("Isi template sendiri terlebih dahulu."); return; }
+    bandResult.value=fillTemplate(tpl,{name,number,reason});
+    showBandStatus("Teks banding berhasil dibuat. Silakan periksa kembali sebelum dikirim melalui jalur resmi WhatsApp.");
+  });
+  document.getElementById("resetBandBtn")?.addEventListener("click", function(){ bandNumber.value="";bandName.value="";bandReason.value="";bandTemplate.value="";bandResult.value="";bandType.value="spam"; if(bandStatus) bandStatus.style.display="none"; });
+  document.getElementById("clearBandBtn")?.addEventListener("click", function(){ bandResult.value=""; });
+  document.getElementById("copyBandBtn")?.addEventListener("click", async function(){
+    if(!bandResult.value.trim()){ showBandStatus("Buat teks banding terlebih dahulu."); return; }
+    try{ await navigator.clipboard.writeText(bandResult.value); showBandStatus("Teks banding berhasil disalin."); }
+    catch(e){ const ta=document.createElement("textarea"); ta.value=bandResult.value; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); showBandStatus("Teks banding berhasil disalin."); }
+  });
+});
+
+function showBugNotice(name){
+  alert(name + " tersedia sebagai tampilan menu. Fungsi pengiriman payload crash tidak diaktifkan.");
+}
+</script>
+
+</body>
+</html>
